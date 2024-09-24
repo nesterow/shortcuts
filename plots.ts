@@ -54,7 +54,7 @@ export function sideBySidePlot(opts: {
             })
             plt.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
             const svgUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(plt)))}`
-            imgTags.push(`<img src='${svgUrl}'>`)
+            imgTags.push(`<img title="${xTarget} / ${yTarget}" src='${svgUrl}'>`)
         }
     }
     const output = `
