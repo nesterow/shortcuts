@@ -1,4 +1,4 @@
-import * as Plot from "npm:@observablehq/plot";
+import * as _Plot from "npm:@observablehq/plot";
 import { DOMParser, SVGElement } from "npm:linkedom";
 
 const defaultPlotSettings = {
@@ -17,6 +17,9 @@ export function configurePlots(options: any) {
     Object.assign(defaultPlotSettings, options)
 }
 
+export const document = new DOMParser().parseFromString(`<!DOCTYPE html><html></html>`, "text/html");
+
+export const Plot = _Plot;
 
 /**
  * Draw side-by-side plots 
@@ -43,7 +46,6 @@ export function sideBySidePlot(opts: {
     cols: number,
     options,
 }) {
-    const document = new DOMParser().parseFromString(`<!DOCTYPE html><html></html>`, "text/html");
     const imgTags: string[] = []
     for (const xTarget of opts.x) {
         for (const yTarget of opts.y) {
