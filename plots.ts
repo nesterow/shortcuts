@@ -99,8 +99,6 @@ export function histPlot(
     ...(opts.options ?? defaultPlotSettings),
     y: { grid: true },
     marks: [
-      Plot.ruleY([0]),
-      Plot.ruleX([0]),
       Plot.rectY(data, Plot.binX({ y: opts.fn ?? "count" }, { x: x })),
     ],
     document,
@@ -116,7 +114,6 @@ export function oneBoxPlot(
     ...(opts.options ?? defaultPlotSettings),
     y: { grid: true },
     marks: [
-      Plot.ruleY([0]),
       Plot.boxY(data, { y, ...(opts.box ?? {}) }),
     ],
     document,
