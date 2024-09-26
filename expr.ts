@@ -8,6 +8,10 @@ export function residuals(x: pl.Expr, y: pl.Expr): pl.Expr {
   return yM.minus(beta.mul(xM));
 }
 
+export const fillzero = (
+  value = 0.0001,
+) => (pl.all().replaceStrict(0, value, pl.all()));
+
 export const ScaleExpr: pl.Expr = (pl.all().minus(pl.all().min())).div(
   pl.all().max().minus(pl.all().min()),
 );
