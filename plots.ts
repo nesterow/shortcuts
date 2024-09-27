@@ -208,3 +208,50 @@ export function threeChart(data: any[], x = "column", opts = { width: 800 }) {
     }),
   };
 }
+
+export function distPlot(...data: number[][]) {
+  const colors = [
+    "red",
+    "blue",
+    "green",
+    "orange",
+    "purple",
+    "brown",
+    "pink",
+    "gray",
+    "black",
+    "cyan",
+    "magenta",
+    "yellow",
+    "lightblue",
+    "lightgreen",
+    "lightgray",
+  ];
+  const plt = Plot.plot({
+    margin: 50,
+    width: 1200,
+    marks: [
+      Plot.hexgrid(),
+      data.map((a, i) =>
+        Plot.areaY(
+          a,
+          Plot.binX({ y: "count" }, {
+            x: (x: number) => x,
+            fill: colors[i % colors.length],
+            curve: "catmull-rom",
+            fillOpacity: .5,
+          }),
+        )
+      ),
+    ],
+    document,
+  });
+  plt.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  return {
+    [Symbol.for("Jupyter.display")]: () => ({
+      "text/html": `<img src='data:image/svg+xml;base64,${
+        btoa(unescape(encodeURIComponent(plt)))
+      }'>`,
+    }),
+  };
+}

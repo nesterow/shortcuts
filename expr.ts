@@ -12,9 +12,8 @@ export const fillzero = (
   value = 0.0001,
 ) => (pl.all().replaceStrict(0, value, pl.all()));
 
-export const ScaleExpr: pl.Expr = (pl.all().minus(pl.all().min())).div(
-  pl.all().max().minus(pl.all().min()),
-);
-export const StdNormExpr: pl.Expr = pl.all().minus(pl.all().mean()).div(
-  pl.all().std(),
-);
+export const minmaxScale = (col: pl.Expr) =>
+  (col.minus(col.min())).div(col.max().minus(col.min()));
+
+export const standardScale = (col: pl.Expr) =>
+  (col.minus(col.mean())).div(col.std());
