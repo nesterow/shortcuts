@@ -1,2 +1,2 @@
 wasm:
-	GOOS=js GOARCH=wasm tinygo build -o stats/mod.wasm ./stats/main.go
+	GOOS=js GOARCH=wasm tinygo build -o stat/mod.wasm ./stat/main.go
