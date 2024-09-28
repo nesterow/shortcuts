@@ -23,16 +23,16 @@ export function sliceK(
       `k value is too large, max k value is ${df.shape.height / testSize}`,
     );
   }
-  let trainSize = df.shape.height - testSize;
-  let result: DfSplit[] = [];
+  const trainSize = df.shape.height - testSize;
+  const result: DfSplit[] = [];
   let data = df;
   for (let i = 0; i < k; i++) {
-    let [train, test] = [data.head(trainSize), data.tail(testSize)];
-    let [trainY, testY] = [
+    const [train, test] = [data.head(trainSize), data.tail(testSize)];
+    const [trainY, testY] = [
       train.select(...yFeatures),
       test.select(...yFeatures),
     ];
-    let [trainX, testX] = [train.drop(...yFeatures), test.drop(...yFeatures)];
+    const [trainX, testX] = [train.drop(yFeatures), test.drop(yFeatures)];
     result.push({
       trainX,
       trainY,
@@ -51,7 +51,7 @@ export function trainTestSplit(
   shuffle = true,
   ...yFeatures: string[]
 ) {
-  let data = shuffle ? df.sample(df.height - 1) : df;
+  const data = shuffle ? df.sample(df.height - 1) : df;
   const result = sliceK(data, size, 1, ...yFeatures);
   return result[0];
 }
@@ -62,6 +62,6 @@ export function kFold(
   shuffle = true,
   ...yFeatures: string[]
 ): DfSplit[] {
-  let data = shuffle ? df.sample(df.height - 1) : df;
+  const data = shuffle ? df.sample(df.height - 1) : df;
   return sliceK(data, 1 / k, k, ...yFeatures);
 }
