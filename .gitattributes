@@ -1,0 +1,4 @@
+notebooks/* linguist-vendored
+lib/* linguist-vendored
+Makefile linguist-vendored
+*.json linguist-vendored

@@ -1,9 +1,10 @@
+// deno-lint-ignore-file no-explicit-any
 import pl from "npm:nodejs-polars";
 
 export function oneHotEncoding(dataframe: pl.DataFrame): pl.DataFrame {
   let df = pl.DataFrame();
   for (const columnName of dataframe.columns) {
-    const column = dataframe[columnName];
+    const column = (dataframe as any)[columnName];
     if (!column.isNumeric()) {
       df = df.hstack(column.toDummies());
     } else {
@@ -19,7 +20,7 @@ export function polynomialTransform(
   interaction_only = false,
   include_bias = true,
 ): pl.DataFrame {
-  let polyRecords: number[][] = [];
+  const polyRecords: number[][] = [];
   dataframe.map((X: number[]) => {
     polyRecords.push(
       polynomialFeatures(X, degree, interaction_only, include_bias),
@@ -38,7 +39,7 @@ export function polynomialFeatures(
   let prev_chunk = [...X];
   const indices = Array.from({ length: X.length }, (_, i) => i);
   for (let d = 1; d < degree; d++) {
-    const new_chunk: any[] = [];
+    const new_chunk: number[] = [];
     for (let i = 0; i < (interaction_only ? X.length - d : X.length); i++) {
       const v = X[i];
       const next_index = new_chunk.length;
@@ -71,13 +72,13 @@ export function augmentMeanForward(
   df: pl.DataFrame,
   interval = 100,
 ) {
-  let sorted = df.sort(feature);
-  let featIdx = sorted.findIdxByName(feature);
+  const sorted = df.sort(feature);
+  const featIdx = sorted.findIdxByName(feature);
   let result = sorted.head(1);
   for (let i = 0; i < sorted.height; i++) {
-    let p1 = sorted.row(i).at(featIdx);
-    let k = (i + 1) % sorted.height;
-    let p2 = sorted.row(k).at(featIdx);
+    const p1 = sorted.row(i).at(featIdx);
+    const k = (i + 1) % sorted.height;
+    const p2 = sorted.row(k).at(featIdx);
     if (p2 - p1 > interval) {
       for (let j = 0; j < Math.round((p2 - p1) / interval) - 1; j++) {
         result = pl.concat([
