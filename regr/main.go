@@ -11,7 +11,7 @@ import (
 
 func InitRegrExports(this js.Value, args []js.Value) interface{} {
 	exports := args[0]
-	exports.Set("ABCD", js.FuncOf(src.ABCD))
+	exports.Set("Linear", js.FuncOf(src.NewLinearRegressionJS))
 	return nil
 }
 

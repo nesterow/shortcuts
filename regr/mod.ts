@@ -1,5 +1,4 @@
 import "../lib/wasm_tinygo.js";
-import type { Stat } from "./types.ts";
 
 // @ts-expect-error: no types
 const go = new Go();
@@ -13,9 +12,9 @@ const wasm = wasmMmodule.instance;
 
 go.run(wasm);
 
-const _exports = {} as Record<string, (...args: unknown[]) => unknown> & Stat;
+const _exports = {} as Record<string, (...args: unknown[]) => unknown>;
 
 // @ts-ignore: no types
-__InitStatExports(_exports);
+__InitRegrExports(_exports);
 
 export default _exports;
