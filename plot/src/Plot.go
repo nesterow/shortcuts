@@ -86,6 +86,8 @@ func PlotterLinesFromJSObject(object js.Value, plt *plot.Plot, plotters *[]plot.
 				g.Shape = draw.PlusGlyph{}
 			case "ring":
 				g.Shape = draw.RingGlyph{}
+			case "circle":
+				g.Shape = draw.CircleGlyph{}
 			case "square":
 				g.Shape = draw.SquareGlyph{}
 			case "triangle":
@@ -172,7 +174,7 @@ func PlotterLinesFromJSObject(object js.Value, plt *plot.Plot, plotters *[]plot.
 		if legend != "" {
 			plt.Legend.Add(legend, l, lp)
 		}
-	case "fitLinear":
+	case "trend":
 		X := make([]float64, len(XYs))
 		Y := make([]float64, len(XYs))
 		min := XYs[0].Y
