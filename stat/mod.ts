@@ -1,4 +1,4 @@
-import "../lib/wasm.js";
+import "../lib/wasm_tinygo.js";
 import type { Stat } from "./types.ts";
 
 // @ts-expect-error: no types

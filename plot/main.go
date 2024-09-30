@@ -12,6 +12,7 @@ import (
 func InitPlotExports(this js.Value, args []js.Value) interface{} {
 	exports := args[0]
 	exports.Set("Hist", js.FuncOf(src.HistPlot))
+	exports.Set("Plot", js.FuncOf(src.Plot))
 	return nil
 }
 

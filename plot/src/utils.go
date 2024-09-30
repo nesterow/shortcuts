@@ -9,6 +9,9 @@ import (
 	"fmt"
 	"image/color"
 	"io"
+	"syscall/js"
+
+	"gonum.org/v1/plot/plotter"
 )
 
 func WriterToBase64String(writer io.WriterTo) string {
@@ -35,4 +38,24 @@ func HexToRGBA(hex string) color.RGBA {
 		fmt.Println("Invalid hex color:", hex)
 	}
 	return c
+}
+
+func XYFromJSObject(object js.Value) plotter.XYs {
+	var (
+		x = object.Get("x")
+		y = object.Get("y")
+	)
+	if x.IsUndefined() || y.IsUndefined() {
+		return nil
+	}
+	return XYFromJSValues(x, y)
+}
+
+func XYFromJSValues(x, y js.Value) plotter.XYs {
+	xy := make(plotter.XYs, x.Length())
+	for i := range xy {
+		xy[i].X = x.Index(i).Float()
+		xy[i].Y = y.Index(i).Float()
+	}
+	return xy
 }
