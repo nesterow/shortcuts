@@ -9,13 +9,6 @@ import (
 	"gonum.org/v1/gonum/mat"
 )
 
-// ref: mat.Dense
-// fit: solve least squares
-// predict: predict y from x
-// save: save model
-// load: load model
-// note: separate wasm/js glue
-
 type LinearRegression struct {
 	Coef *mat.Dense
 }
@@ -32,6 +25,12 @@ func (reg *LinearRegression) Predict(X [][]float64) ([]float64, error) {
 	YDense := new(mat.Dense)
 	YDense.Mul(Array2DToDense(X), reg.Coef)
 	return YDense.RawMatrix().Data, nil
+}
+
+func (reg *LinearRegression) Score(YT, Y [][]float64) float64 {
+	TDense := Array2DToDense(YT)
+	YDense := Array2DToDense(Y)
+	return R2Score(TDense, YDense, nil, "raw_values").At(0, 0)
 }
 
 func (l *LinearRegression) Save() ([]byte, error) {
@@ -54,6 +53,11 @@ func NewLinearRegressionJS(this js.Value, args []js.Value) interface{} {
 		X := JSFloatArray2D(args[0])
 		Y, _ := reg.Predict(X)
 		return ToJSArray(Y)
+	}))
+	obj.Set("score", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		X := JSFloatArray2D(args[0])
+		Y := JSFloatArray2D(args[1])
+		return reg.Score(X, Y)
 	}))
 	return obj
 }

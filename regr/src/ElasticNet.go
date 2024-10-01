@@ -93,4 +93,9 @@ func setjsmethods(obj js.Value, regr *ElasticNet) {
 		Y, _ := regr.Predict(X)
 		return ToJSArray(Y)
 	}))
+	obj.Set("score", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		X := JSFloatArray2D(args[0])
+		Y := JSFloatArray2D(args[1])
+		return regr.Score(X, Y)
+	}))
 }

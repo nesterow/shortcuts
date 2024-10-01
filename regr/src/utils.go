@@ -17,6 +17,14 @@ func Array2DToDense(X [][]float64) *mat.Dense {
 	return dense
 }
 
+func JSFloatArray(arg js.Value) []float64 {
+	arr := make([]float64, arg.Length())
+	for i := 0; i < len(arr); i++ {
+		arr[i] = arg.Index(i).Float()
+	}
+	return arr
+}
+
 func JSFloatArray2D(arg js.Value) [][]float64 {
 	arr := make([][]float64, arg.Length())
 	for i := 0; i < len(arr); i++ {
