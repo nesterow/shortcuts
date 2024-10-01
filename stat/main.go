@@ -12,7 +12,7 @@ import (
 )
 
 func InitStatExports(this js.Value, args []js.Value) interface{} {
-	exports := args[0]
+	exports := js.Global().Get("Object").New()
 	exports.Set("Bhattacharyya", js.FuncOf(src.Bhattacharyya))
 	exports.Set("BivariateMoment", js.FuncOf(src.BivariateMoment))
 	exports.Set("ChiSquare", js.FuncOf(src.ChiSquare))
@@ -54,7 +54,7 @@ func InitStatExports(this js.Value, args []js.Value) interface{} {
 	exports.Set("StdScore", js.FuncOf(src.StdScore))
 	exports.Set("TOC", js.FuncOf(src.TOC))
 	exports.Set("Variance", js.FuncOf(src.Variance))
-	return nil
+	return exports
 }
 
 func main() {
