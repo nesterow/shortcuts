@@ -12,6 +12,8 @@ import (
 func InitRegrExports(this js.Value, args []js.Value) interface{} {
 	exports := args[0]
 	exports.Set("Linear", js.FuncOf(src.NewLinearRegressionJS))
+	exports.Set("ElasticNet", js.FuncOf(src.NewElasticNetJS))
+	exports.Set("Lasso", js.FuncOf(src.NewLassoJS))
 	return nil
 }
 
