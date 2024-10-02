@@ -12,9 +12,7 @@ const wasm = wasmMmodule.instance;
 
 go.run(wasm);
 
-const _exports = {} as Record<string, (...args: unknown[]) => unknown>;
-
 // @ts-ignore: no types
-__InitRegrExports(_exports);
+const _exports =  __InitRegrExports(_exports) as Record<string, (...args: unknown[]) => unknown>;
 
 export default _exports;

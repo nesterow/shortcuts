@@ -61,3 +61,10 @@ func NewLinearRegressionJS(this js.Value, args []js.Value) interface{} {
 	}))
 	return obj
 }
+
+func R2ScoreJS(this js.Value, args []js.Value) interface{} {
+	X := JSFloatArray2D(args[0])
+	Y := JSFloatArray2D(args[1])
+	reg := new(LinearRegression)
+	return reg.Score(X, Y)
+}

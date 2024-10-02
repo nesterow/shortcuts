@@ -41,7 +41,6 @@ func CoordinateDescent(w *mat.Dense, l1reg, l2reg float64, X *mat.Dense, Y *mat.
 	RNorm, wNorm, ANorm, nn, tmpfactor := 0., 0., 0., 0., 0.
 	XtA = mat.NewDense(NFeatures, NTasks, nil)
 
-	// # norm_cols_X = (np.asarray(X) ** 2).sum(axis=0)
 	normColsX := make([]float64, NFeatures)
 	Xmat := X.RawMatrix()
 	for jX := 0; jX < Xmat.Rows*Xmat.Stride; jX = jX + Xmat.Stride {
@@ -49,18 +48,13 @@ func CoordinateDescent(w *mat.Dense, l1reg, l2reg float64, X *mat.Dense, Y *mat.
 			normColsX[i] += v * v
 		}
 	}
-	// # R = Y - np.dot(X, W.T)
 	R.Mul(X, w)
 	R.Sub(Y, R)
-
-	// # tol = tol * linalg.norm(Y, ord='fro') ** 2
-
 	Y2.MulElem(Y, Y)
 	tol *= mat.Sum(Y2)
 
 	for nIter = 0; nIter < maxIter; nIter++ {
 		wmax, dwmax = 0., 0.
-
 		for fIter = 0; fIter < NFeatures; fIter++ {
 			if random {
 				if rng != nil {
@@ -74,23 +68,13 @@ func CoordinateDescent(w *mat.Dense, l1reg, l2reg float64, X *mat.Dense, Y *mat.
 			if normColsX[ii] == 0. {
 				continue
 			}
-			// # w_ii = W[:, ii] # Store previous value
 			wii.CopyVec(w.RowView(ii)) // store previous value
-
-			//  if np.sum(w_ii ** 2) != 0.0:  # can do better
 			if mat.Norm(wii, 2) != 0. {
-				// # R +=  X[:,ii] *wii # rank 1 update
-
 				xw.Mul(X.ColView(ii), wii.T())
 				R.Add(R, xw)
 			}
-
-			// # tmp = np.dot(X[:, ii][None, :], R).ravel()
 			tmp.MulVec(R.T(), X.ColView(ii))
-
-			// # nn = sqrt(np.sum(tmp ** 2))
 			nn = mat.Norm(tmp, 2)
-			// # W[:, ii] = tmp * fmax(1. - l1_reg / nn, 0) / (norm_cols_X[ii] + l2_reg)
 			if l1reg < nn {
 				tmpfactor = math.Max(1.-l1reg/nn, 0) / (normColsX[ii] + l2reg)
 
@@ -98,16 +82,10 @@ func CoordinateDescent(w *mat.Dense, l1reg, l2reg float64, X *mat.Dense, Y *mat.
 				tmpfactor = 0.
 			}
 			w.RowView(ii).(*mat.VecDense).ScaleVec(tmpfactor, tmp)
-
-			// # if np.sum(W[:, ii] ** 2) != 0.0:  # can do better
-
 			if mat.Norm(w.RowView(ii), 2) != 0. {
-				// # R -= np.dot(X[:, ii][:, None], W[:, ii][None, :])
-				// # Update residual : rank 1 update
 				xw.Mul(X.ColView(ii), w.RowView(ii).T())
 				R.Sub(R, xw)
 			}
-			// # update the maximum absolute coefficient update
 			dwii = 0.
 			for o := 0; o < NTasks; o++ {
 				v := math.Abs(w.At(ii, o) - wii.AtVec(o))
@@ -136,11 +114,6 @@ func CoordinateDescent(w *mat.Dense, l1reg, l2reg float64, X *mat.Dense, Y *mat.
 		}
 
 		if wmax == 0. || dwmax/wmax < dwtol || nIter == maxIter-1 {
-			// # the biggest coordinate update of this iteration was smaller
-			// # than the tolerance: check the duality gap as ultimate
-			// # stopping criterion
-
-			// # XtA = np.dot(X.T, R) - l2_reg * W.T
 			XtA.Mul(X.T(), R)
 			XtAmat := XtA.RawMatrix()
 			Wmat := w.RawMatrix()
@@ -149,8 +122,6 @@ func CoordinateDescent(w *mat.Dense, l1reg, l2reg float64, X *mat.Dense, Y *mat.
 					XtAmat.Data[jXtA+i] -= l2reg * Wmat.Data[jW+i]
 				}
 			}
-
-			// # dual_norm_XtA = np.max(np.sqrt(np.sum(XtA ** 2, axis=1)))
 			dualNormXtA = 0.
 			for ii := 0; ii < NFeatures; ii++ {
 				XtAaxis1norm = mat.Norm(XtA.RowView(ii), 2)
@@ -158,8 +129,6 @@ func CoordinateDescent(w *mat.Dense, l1reg, l2reg float64, X *mat.Dense, Y *mat.
 					dualNormXtA = XtAaxis1norm
 				}
 			}
-			// # R_norm = linalg.norm(R, ord='fro')
-			// # w_norm = linalg.norm(W, ord='fro')
 			RNorm = mat.Norm(R, 2)
 			wNorm = mat.Norm(w, 2)
 			if dualNormXtA > l1reg {
@@ -170,19 +139,12 @@ func CoordinateDescent(w *mat.Dense, l1reg, l2reg float64, X *mat.Dense, Y *mat.
 				cons = 1.
 				gap = RNorm * RNorm
 			}
-			// # ry_sum = np.sum(R * y)
 			RY.MulElem(R, Y)
-			// # l21_norm = np.sqrt(np.sum(W ** 2, axis=0)).sum()
 			l21norm = 0.
 			for ii = 0; ii < NFeatures; ii++ {
 				l21norm += mat.Norm(w.RowView(ii), 2)
 			}
 			gap += l1reg*l21norm - cons*mat.Sum(RY) + .5*l2reg*(1.+cons*cons)*(wNorm*wNorm)
-
-			// fmt.Printf("X\n%4f\nR:\n%4f\nW:\n%.4f\nXtA:\n%4f\n", mat.Formatted(X), mat.Formatted(R), mat.Formatted(w), mat.Formatted(XtA))
-			// fmt.Println("dwmax", dwmax, "wmax", wmax, "dwtol", dwtol)
-			// fmt.Println(nIter, gap, "l1reg", l1reg, "l2reg", l2reg, "l21norm", l21norm, "sumRY", cons*mat.Sum(RY), "dualNormXtA", dualNormXtA, "RNorm", RNorm, "gap", gap)
-
 			if gap < tol {
 				// return if we have reached the desired tolerance
 				break
