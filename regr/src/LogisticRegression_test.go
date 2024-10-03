@@ -6,16 +6,16 @@ import (
 )
 
 func TestLogisticRegression(t *testing.T) {
-	X := [][]float64{{10.1, 10.1, 10.1}, {2.1, 2.1, 2.1}, {10.2, 10.2, 10.2}, {2.2, 2.2, 2.2}}
+	X := [][]float64{{.1, .1, .1}, {.2, .2, .2}, {.1, .1, .1}, {.2, .2, .2}}
 	Y := [][]float64{{0}, {1}, {0}, {1}}
 	XDense := Array2DToDense(X)
 	YDense := Array2DToDense(Y)
-	epochs := 10
-	regr := &LogisticRegression{}
-	err := regr.Fit(XDense, YDense, epochs)
-	if err != nil {
-		t.Error(err)
+	epochs := 1000
+	regr := &LogisticRegression{
+		LearningRate: .1,
 	}
-	fmt.Println(regr.Weights, regr.Bias, regr.Losses)
-	fmt.Println(YDense, regr.Predict(XDense))
+	regr.Fit(XDense, YDense, epochs, nil)
+	fmt.Println(regr.Weights, regr.Bias)
+	yPred := regr.Predict(XDense)
+	fmt.Println(YDense, yPred, regr.Loss(YDense, yPred))
 }
