@@ -56,5 +56,5 @@ func TestMCLogisticRegression(t *testing.T) {
 	regr.Fit(XDense, YDense)
 	// fmt.Println(regr.Weights, regr.Bias)
 	yPred := regr.Predict(XDense)
-	fmt.Println(YDense, yPred) //, regr.Loss(YDense, yPred))
+	fmt.Println(YDense, yPred, regr.Loss(YDense, yPred))
 }
