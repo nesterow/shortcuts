@@ -34,7 +34,7 @@ func (regr *LogisticRegression) Loss(yTrue, yPred mat.Matrix) float64 {
 	sum := &mat.Dense{}
 	sum.Add(y1, y2)
 	w, h := yTrue.Dims()
-	return mat.Sum(sum) / float64(w*h)
+	return -(mat.Sum(sum) / float64(w*h))
 }
 
 func (regr *LogisticRegression) forward(X mat.Matrix) mat.Matrix {
@@ -76,8 +76,8 @@ func (regr *LogisticRegression) backprop(x, y mat.Matrix) float64 {
 	return loss
 }
 
-func (regr *LogisticRegression) Fit(X, Y mat.Matrix, epochs int, losses *[]float64) {
-	for i := 0; i < epochs; i++ {
+func (regr *LogisticRegression) Fit(X, Y mat.Matrix, losses *[]float64) {
+	for i := 0; i < regr.Epochs; i++ {
 		regr.backprop(X, Y)
 		if losses != nil {
 			*losses = append(*losses, regr.Loss(Y, regr.forward(X)))
