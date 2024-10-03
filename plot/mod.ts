@@ -12,10 +12,8 @@ const wasm = wasmMmodule.instance;
 
 go.run(wasm);
 
-const _exports = {} as Record<string, (...args: unknown[]) => unknown>;
-
 // @ts-ignore: no types
-__InitPlotExports(_exports);
+const _exports = __InitPlotExports() as Record<string, (...args: unknown[]) => unknown>;
 
 for (const key in _exports) {
   const draw = _exports[key];

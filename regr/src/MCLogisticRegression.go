@@ -11,11 +11,10 @@ type MCLogisticRegression struct {
 	LearningRate float64
 	Models       []*LogisticRegression
 	cols         int
-	rows         int
 }
 
 func (regr *MCLogisticRegression) Fit(x, y mat.Matrix) {
-	regr.rows, regr.cols = y.Dims()
+	_, regr.cols = y.Dims()
 	regr.Models = make([]*LogisticRegression, regr.cols)
 	for j := 0; j < regr.cols; j++ {
 		regr.Models[j] = &LogisticRegression{
@@ -29,7 +28,8 @@ func (regr *MCLogisticRegression) Fit(x, y mat.Matrix) {
 }
 
 func (regr *MCLogisticRegression) Predict(x mat.Matrix) mat.Matrix {
-	probs := mat.NewDense(regr.rows, regr.cols, nil)
+	rows, _ := x.Dims()
+	probs := mat.NewDense(rows, regr.cols, nil)
 	wg := sync.WaitGroup{}
 	wg.Add(regr.cols)
 	for j := 0; j < regr.cols; j++ {
