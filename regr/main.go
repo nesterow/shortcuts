@@ -15,6 +15,7 @@ func InitRegrExports(this js.Value, args []js.Value) interface{} {
 	exports.Set("ElasticNet", js.FuncOf(src.NewElasticNetJS))
 	exports.Set("Lasso", js.FuncOf(src.NewLassoJS))
 	exports.Set("R2Score", js.FuncOf(src.R2ScoreJS))
+	exports.Set("Logistic", js.FuncOf(src.NewLogisticRegressionJS))
 	return exports
 }
 
